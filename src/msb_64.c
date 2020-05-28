@@ -1,8 +1,10 @@
 /* Copyright (c) 2013
  * The Trustees of Columbia University in the City of New York
  * All rights reserved.
+ * Copyright (c) 2020
  *
  * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
+ * Author:  Michael Axtmann       (michael.axtmann@kit.edu)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +59,7 @@
 #include "util.h"
 
 
-uint64_t micro_time(void)
+inline uint64_t micro_time(void)
 {
 	struct timeval t;
 	struct timezone z;
@@ -65,7 +67,7 @@ uint64_t micro_time(void)
 	return t.tv_sec * 1000000 + t.tv_usec;
 }
 
-int hardware_threads(void)
+inline int hardware_threads(void)
 {
 	char name[40];
 	struct stat st;
@@ -95,7 +97,7 @@ void memory_bind(int cpu_id)
 	numa_free_nodemask(numa_node);
 }
 
-void *mamalloc(size_t size)
+inline void *mamalloc(size_t size)
 {
 	void *ptr = NULL;
 	return posix_memalign(&ptr, 64, size) ? NULL : ptr;
@@ -2490,79 +2492,79 @@ uint64_t check(uint64_t **keys, uint64_t **rids, uint64_t *size, int numa, int s
 	return checksum;
 }
 
-int main(int argc, char **argv)
-{
-	uint64_t tuples = argc > 1 ? atoi(argv[1]) : 1000;
-	int threads = argc > 2 ? atoi(argv[2]) : 64;
-	int numa = argc > 3 ? atoi(argv[3]) : numa_max_node() + 1;
-	tuples *= (uint64_t) 1000000;
-	double fudge = 1.2;
-	assert(numa > 0 && threads >= numa && threads % numa == 0);
-	assert(threads == 64);
-	uint64_t tuples_per_numa = tuples / numa;
-	uint64_t capacity_per_numa = tuples_per_numa * fudge;
-	uint64_t *keys[numa], *rids[numa];
-	uint64_t *keys_buf[numa], *rids_buf[numa];
-	uint64_t size[numa], cap[numa];
-	uint32_t seed = micro_time();
-	int threads_per_numa = threads / numa;
-	int i, same_key_payload = 1;
-	srand(seed);
-	fprintf(stderr, "Tuples: %.2f mil. (%.1f GB)\n", tuples / 1000000.0,
-			(tuples * 16.0) / (1024 * 1024 * 1024));
-	fprintf(stderr, "NUMA nodes: %d\n", numa);
-	fprintf(stderr, "Hardware threads: %d (%d per NUMA)\n",
-			threads, threads / numa);
-	fprintf(stderr, "Threads: %d (%d per NUMA)\n", threads, threads / numa);
-	for (i = 0 ; i != numa ; ++i) {
-		size[i] = tuples_per_numa;
-		cap[i] = size[i] * fudge;
-	}
-	// initialize space
-	uint64_t sum_k, sum_v, checksum;
-	uint64_t t = micro_time();
-	srand(t);
-	sum_k = init_64(keys, size, cap, threads, numa, 64, 0.0, 0, 0);
-	srand(t);
-	sum_v = init_64(rids, size, cap, threads, numa, 64, 0.0, 0, 0);
-	assert(sum_k == sum_v);
-	t = micro_time() - t;
-	fprintf(stderr, "Generation time: %ld us\n", t);
-	fprintf(stderr, "Generation rate: %.1f mrps\n", tuples * 1.0 / t);
-	fprintf(stderr, "Seed: %u\n", seed);
-	// sort info
-	uint64_t times[12];
-	char *desc[12];
-	// call parallel sort
-	t = micro_time();
-	sort(keys, rids, size, threads, numa, fudge, desc, times);
-	t = micro_time() - t;
-	// print sort times
-	fprintf(stderr, "Sort time: %ld us\n", t);
-	double gigs = (tuples * 16.0) / (1024 * 1024 * 1024);
-	fprintf(stderr, "Sort rate: %.1f mrps (%.2f GB / sec)\n",
-		tuples * 1.0 / t, (gigs * 1000000) / t);
-	// compute total time
-	uint64_t total_time = 0;
-	for (i = 0 ; desc[i] != NULL ; ++i)
-		total_time += times[i];
-	// show part times
-	for (i = 0 ; desc[i] != NULL ; ++i)
-		fprintf(stderr, "%s %10ld us (%5.2f%%)\n", desc[i],
-				 times[i], times[i] * 100.0 / total_time);
-	fprintf(stderr, "Noise time loss: %.2f%%\n", t * 100.0 / total_time - 100);
-	for (i = 0 ; i != numa ; ++i)
-		fprintf(stderr, "Node %d:%6.2f%%\n", i, size[i] * 100.0 / tuples);
-	// check sort order and sum
-	checksum = check(keys, rids, size, numa, same_key_payload);
-	assert(checksum == sum_k);
-	fprintf(stderr, "Checksum: %lu\n", checksum);
-	// free sort data
-	for (i = 0 ; i != numa ; ++i) {
-		free(keys[i]);
-		free(rids[i]);
-	}
-	printf("%.1f mrps (%.2f GB / sec)\n",
-		tuples * 1.0 / t, (gigs * 1000000) / t);
-	return EXIT_SUCCESS;
-}
+/* int main(int argc, char **argv) */
+/* { */
+/* 	uint64_t tuples = argc > 1 ? atoi(argv[1]) : 1000; */
+/* 	int threads = argc > 2 ? atoi(argv[2]) : 64; */
+/* 	int numa = argc > 3 ? atoi(argv[3]) : numa_max_node() + 1; */
+/* 	tuples *= (uint64_t) 1000000; */
+/* 	double fudge = 1.2; */
+/* 	assert(numa > 0 && threads >= numa && threads % numa == 0); */
+/* 	assert(threads == 64); */
+/* 	uint64_t tuples_per_numa = tuples / numa; */
+/* 	uint64_t capacity_per_numa = tuples_per_numa * fudge; */
+/* 	uint64_t *keys[numa], *rids[numa]; */
+/* 	uint64_t *keys_buf[numa], *rids_buf[numa]; */
+/* 	uint64_t size[numa], cap[numa]; */
+/* 	uint32_t seed = micro_time(); */
+/* 	int threads_per_numa = threads / numa; */
+/* 	int i, same_key_payload = 1; */
+/* 	srand(seed); */
+/* 	fprintf(stderr, "Tuples: %.2f mil. (%.1f GB)\n", tuples / 1000000.0, */
+/* 			(tuples * 16.0) / (1024 * 1024 * 1024)); */
+/* 	fprintf(stderr, "NUMA nodes: %d\n", numa); */
+/* 	fprintf(stderr, "Hardware threads: %d (%d per NUMA)\n", */
+/* 			threads, threads / numa); */
+/* 	fprintf(stderr, "Threads: %d (%d per NUMA)\n", threads, threads / numa); */
+/* 	for (i = 0 ; i != numa ; ++i) { */
+/* 		size[i] = tuples_per_numa; */
+/* 		cap[i] = size[i] * fudge; */
+/* 	} */
+/* 	// initialize space */
+/* 	uint64_t sum_k, sum_v, checksum; */
+/* 	uint64_t t = micro_time(); */
+/* 	srand(t); */
+/* 	sum_k = init_64(keys, size, cap, threads, numa, 64, 0.0, 0, 0); */
+/* 	srand(t); */
+/* 	sum_v = init_64(rids, size, cap, threads, numa, 64, 0.0, 0, 0); */
+/* 	assert(sum_k == sum_v); */
+/* 	t = micro_time() - t; */
+/* 	fprintf(stderr, "Generation time: %ld us\n", t); */
+/* 	fprintf(stderr, "Generation rate: %.1f mrps\n", tuples * 1.0 / t); */
+/* 	fprintf(stderr, "Seed: %u\n", seed); */
+/* 	// sort info */
+/* 	uint64_t times[12]; */
+/* 	char *desc[12]; */
+/* 	// call parallel sort */
+/* 	t = micro_time(); */
+/* 	sort(keys, rids, size, threads, numa, fudge, desc, times); */
+/* 	t = micro_time() - t; */
+/* 	// print sort times */
+/* 	fprintf(stderr, "Sort time: %ld us\n", t); */
+/* 	double gigs = (tuples * 16.0) / (1024 * 1024 * 1024); */
+/* 	fprintf(stderr, "Sort rate: %.1f mrps (%.2f GB / sec)\n", */
+/* 		tuples * 1.0 / t, (gigs * 1000000) / t); */
+/* 	// compute total time */
+/* 	uint64_t total_time = 0; */
+/* 	for (i = 0 ; desc[i] != NULL ; ++i) */
+/* 		total_time += times[i]; */
+/* 	// show part times */
+/* 	for (i = 0 ; desc[i] != NULL ; ++i) */
+/* 		fprintf(stderr, "%s %10ld us (%5.2f%%)\n", desc[i], */
+/* 				 times[i], times[i] * 100.0 / total_time); */
+/* 	fprintf(stderr, "Noise time loss: %.2f%%\n", t * 100.0 / total_time - 100); */
+/* 	for (i = 0 ; i != numa ; ++i) */
+/* 		fprintf(stderr, "Node %d:%6.2f%%\n", i, size[i] * 100.0 / tuples); */
+/* 	// check sort order and sum */
+/* 	checksum = check(keys, rids, size, numa, same_key_payload); */
+/* 	assert(checksum == sum_k); */
+/* 	fprintf(stderr, "Checksum: %lu\n", checksum); */
+/* 	// free sort data */
+/* 	for (i = 0 ; i != numa ; ++i) { */
+/* 		free(keys[i]); */
+/* 		free(rids[i]); */
+/* 	} */
+/* 	printf("%.1f mrps (%.2f GB / sec)\n", */
+/* 		tuples * 1.0 / t, (gigs * 1000000) / t); */
+/* 	return EXIT_SUCCESS; */
+/* } */

@@ -1,11 +1,7 @@
-/* Copyright (c) 2013
- * The Trustees of Columbia University in the City of New York
- * All rights reserved.
- * Copyright (c) 2020
+/* Copyright (c) 2020
  * Michael Axtmann
  *
- * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
- *          Michael Axtmann       (michael.axtmann@kit.edu)
+ * Author:  Michael Axtmann       (michael.axtmann@kit.edu)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,4 +31,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _MSB_64_H_
+#define _MSB_64_H_
 
+void sort(uint64_t **keys, uint64_t **rids, uint64_t *size,
+	  int threads, int numa, double fudge,
+	  char **description, uint64_t *times);
+
+void *mamalloc(size_t size);
+
+void *check_thread(void *arg);
+uint64_t check(uint64_t **keys, uint64_t **rids, uint64_t *size, int numa, int same);
+
+void memory_bind(int cpu_id);
+
+#endif
