@@ -100,11 +100,11 @@ inline int hardware_threads(void)
 /* 	numa_free_nodemask(numa_node); */
 /* } */
 
-inline void *mamalloc(size_t size)
-{
-	void *ptr = NULL;
-	return posix_memalign(&ptr, 64, size) ? NULL : ptr;
-}
+/* inline void *mamalloc(size_t size) */
+/* { */
+/* 	void *ptr = NULL; */
+/* 	return posix_memalign(&ptr, 64, size) ? NULL : ptr; */
+/* } */
 
 /* uint8_t log_2(uint64_t x) */
 /* { */

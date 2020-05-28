@@ -97,7 +97,7 @@ void memory_bind(int cpu_id)
 	numa_free_nodemask(numa_node);
 }
 
-inline void *mamalloc(size_t size)
+void *mamalloc(size_t size)
 {
 	void *ptr = NULL;
 	return posix_memalign(&ptr, 64, size) ? NULL : ptr;
