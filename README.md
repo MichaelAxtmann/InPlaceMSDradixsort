@@ -12,7 +12,7 @@ This repository contains the in-place MSD radix sort implementation of the publi
 }
 ```
 
-from Orestis Polychroniou et al. The source code has been retrieved from Orestis Polychroniou's personal web page [www.cs.columbia.edu/~orestis](www.cs.columbia.edu/~orestis). 
+from Orestis Polychroniou et al. The source code has been retrieved from Orestis Polychroniou's personal web page [www.cs.columbia.edu/~orestis](http://www.cs.columbia.edu/~orestis). 
 
 This repository adds support for CMake and provides a library for the in-place MSD radix sort algorithm.
 
