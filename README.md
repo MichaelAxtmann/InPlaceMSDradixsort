@@ -1,6 +1,6 @@
 # Main-Memory Partitioning and Sorting
 
-This repository contains the source code of the publication 
+This repository contains the in-place MSD radix sort implementation of the publication 
 
 ``` BibTeX
 @inproceedings{polychroniou2014comprehensive,
@@ -12,9 +12,9 @@ This repository contains the source code of the publication
 }
 ```
 
-from Orestis Polychroniou retrieved from his personal web page [www.cs.columbia.edu/~orestis](www.cs.columbia.edu/~orestis). 
+from Orestis Polychroniou et al. The source code has been retrieved from Orestis Polychroniou's personal web page [www.cs.columbia.edu/~orestis](www.cs.columbia.edu/~orestis). 
 
-This repository adds support for CMake and provides a library including the in-place MSD-radixsort algorithm.
+This repository adds support for CMake and provides a library for the in-place MSD radix sort algorithm.
 
 Limitations:
 

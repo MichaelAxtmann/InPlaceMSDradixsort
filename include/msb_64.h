@@ -40,9 +40,4 @@ void sort(uint64_t **keys, uint64_t **rids, uint64_t *size,
 
 void *mamalloc(size_t size);
 
-void *check_thread(void *arg);
-uint64_t check(uint64_t **keys, uint64_t **rids, uint64_t *size, int numa, int same);
-
-void memory_bind(int cpu_id);
-
 #endif
