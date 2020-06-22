@@ -1,12 +1,18 @@
 /* Copyright (c) 2013
  * The Trustees of Columbia University in the City of New York
  * All rights reserved.
- * Copyright (c) 2020
- * Michael Axtmann
+ *
+ * A in-place MSD radixsort implementation borrowed from www.cs.columbia.edu/~orestis.
  *
  * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
  *          Michael Axtmann       (michael.axtmann@kit.edu)
  *
+ * The project InPlaceMSDradixsort adds CMake support to the sorting algorithm.
+ *
+ * Copyright (c) 2020
+ * Michael Axtmann
+ * Author:  Michael Axtmann       (michael.axtmann@kit.edu)
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
